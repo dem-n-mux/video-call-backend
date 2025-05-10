@@ -54,7 +54,7 @@ const settingSchema = new mongoose.Schema(
     // chargeForMatchFemale: { type: Number, default: 10 },
     // maxLoginBonus: { type: Number, default: 30 },
     // minPrivateCallCharge: { type: Number, default: 30 },
-    // referralBonus: { type: Number, default: 30 },
+    referralBonus: { type: Number, default: 30 },
     // paymentGateway: { type: Array, default: [] },
     // hostSalary: { type: Number, default: 0 },
     // hostWithdrawalLimit: { type: Number, default: 0 },

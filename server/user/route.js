@@ -12,6 +12,13 @@ const checkAccessWithSecretKey = require("../../checkAccess");
 
 const userController = require("./controller");
 
+// New APIs
+
+router.post("/login", checkAccessWithSecretKey(), userController.loginUserByPassword);
+router.post("/register", checkAccessWithSecretKey(), upload.single("image"), userController.registerUser);
+
+// Existing APIs
+
 router.get("/checkUser", checkAccessWithSecretKey(), userController.checkUser);
 
 router.post("/userProfile", checkAccessWithSecretKey(), upload.single("image"), userController.loginUser);

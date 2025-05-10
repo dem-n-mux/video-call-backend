@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const requestSchema = new mongoose.Schema(
   {
-    name: { type: String, default: "Hokoo Host" },
-    bio: { type: String, default: "I am Hokoo Host 🤩🤩" },
+    name: { type: String, default: "Babble Host" },
+    bio: { type: String, default: "I am Babble Host 🤩🤩" },
     gender: String,
     identity: String,
     age: { type: Number, default: null },

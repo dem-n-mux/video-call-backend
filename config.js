@@ -13,7 +13,8 @@ module.exports = {
     projectName : "$app_name",
 
     //baseURL
-    baseURL: "http://flirtzybackend.centralindia.cloudapp.azure.com:5000/",     // http://localhost:5000/
+    // baseURL: "http://flirtzybackend.centralindia.cloudapp.azure.com:5000/",
+    baseURL: "http://localhost:5000/",
 
     //Secret key for API
     secretKey: "shared_secret_key",

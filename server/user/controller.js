@@ -24,6 +24,7 @@ const mongoose = require("mongoose");
 
 //privat key
 const admin = require("../../util/privateKey");
+const { getAlphaID } = require("../../util/helper");
 
 const userFunction = async (user, data_) => {
   const data = data_.body;
@@ -150,6 +151,8 @@ exports.loginUser = async (req, res) => {
       return res.status(200).json({ status: false, message: "Invalid Details!!" });
     }
 
+    const referredBy = req.body?.referredBy ? req.body.referredBy : null;
+
     let userQuery;
 
     if (req.body.loginType == 0) {
@@ -222,6 +225,25 @@ exports.loginUser = async (req, res) => {
       newUser.isSignup = true;
       newUser.date = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
 
+      if (referredBy) {
+        const referreringUser = await User.findOne({
+          referralCode: referredBy,
+        });
+
+        if (!referreringUser) { 
+          return res.status(400).json({
+            message: "Invalid referral code",
+          });
+        }
+
+        referreringUser.referredUsers.push(newUser._id);
+        await referreringUser.save();
+
+        newUser.referredBy = referreringUser._id;
+      }
+
+      newUser.referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+
       const user = await userFunction(newUser, req);
 
       res.status(200).json({
@@ -257,6 +279,178 @@ exports.loginUser = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Internal Sever Error!!",
+    });
+  }
+};
+
+exports.registerUser = async (req, res) => {
+  try {
+    if (!req.body.identity || req.body.loginType !== 3 || !req.body.fcm_token) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Invalid Details!!" });
+    }
+
+    const referredBy = req.body?.referredBy ? req.body.referredBy : null;
+
+    if (referredBy) {
+      const refferingUser = await User.findOne({
+        referralCode: referredBy,
+      });
+
+      if (!refferingUser) {
+        return res.status(400).json({
+          message: "Invalid referral code",
+        });
+      }
+    }
+
+    const bonusCoins = settingJSON.loginBonus ? settingJSON.loginBonus : 800;
+    const newUser = new User();
+    newUser.coin = bonusCoins;
+
+    const gender = req.body.gender;
+    let LastUser;
+
+    if (gender === "Female") {
+      LastUser = await User.find({ gender: "Female" })
+        .sort({ uniqueID: -1 })
+        .limit(1);
+    } else if (gender === "Male") {
+      LastUser = await User.find({ gender: "Male" })
+        .sort({ uniqueID: -1 })
+        .limit(1);
+    } else {
+      return res.status(400).json({ status: false, message: "Invalid gender" });
+    }
+
+    let count = 1;
+    if (LastUser.length > 0) {
+      const lastUID = LastUser[0].uniqueID;
+
+      const lastAlpha = lastUID.replace(/^0+/, "");
+      let lastAlphaValue = 0;
+      for (let i = 0; i < lastAlpha.length; i++) {
+        lastAlphaValue = lastAlphaValue * 26 + (lastAlpha.charCodeAt(i) - 64);
+      }
+
+      count = lastAlphaValue + 1;
+    }
+
+    let uniqueID;
+
+    if (gender === "Female") {
+      const alphaID = getAlphaID(count);
+      const paddedID = alphaID.padStart(5, "0");
+      uniqueID = paddedID;
+    } else {
+      uniqueID = count.toString().padStart(5, "0");
+    }
+
+    newUser.uniqueID = uniqueID;
+    newUser.password = req.body.password;
+    newUser.isSignup = true;
+    newUser.date = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
+
+    let referringUser;
+
+    if (referredBy) {
+      referringUser = await User.findOne({
+        referralCode: referredBy,
+      });
+
+      referringUser.referredUsers.push(newUser._id);
+      newUser.referredBy = referringUser._id;
+      referringUser.coin += global.settingJSON?.referralBonus || 30;
+    }
+
+    newUser.referralCode = Math.random()
+      .toString(36)
+      .substring(2, 10)
+      .toUpperCase();
+
+    const user = await userFunction(newUser, req);
+    await referringUser.save();
+
+    res.status(200).json({
+      status: true,
+      message: "Signup Success",
+      user,
+    });
+
+    if (user.fcm_token && user.fcm_token !== null) {
+      const adminPromise = await admin;
+
+      const payload = {
+        token: user.fcm_token,
+        notification: {
+          title: "🎁 You've Earned a Welcome Bonus!",
+          body: "✨ Thanks for joining us! Enjoy your login bonus as a warm welcome from our team. 🌟",
+        },
+        data: {
+          type: "LOGINBONUS",
+        },
+      };
+
+      adminPromise
+        .messaging()
+        .send(payload)
+        .then((response) => {
+          console.log("Successfully sent with response: ", response);
+        })
+        .catch((error) => {
+          console.log("Error sending message: ", error);
+        });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Internal Sever Error!!",
+    });
+  }
+};
+
+exports.loginUserByPassword = async (req, res) => {
+  try {
+    if (!req.body.email || !req.body.password) {
+      return res
+        .status(200)
+        .json({ status: false, message: "Invalid Details!!" });
+    }
+
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: false, message: "User does not exist!!" });
+    }
+
+    if (user.isBlock) {
+      return res
+        .status(400)
+        .json({ status: false, message: "You are blocked by admin!" });
+    }
+
+    if (user.password !== req.body.password) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Password is incorrect!!" });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "User login Successfully!!",
+      user,
+    });
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: false,
       message: error.message || "Internal Sever Error!!",

@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, default: "Hokoo User" },
-    bio: { type: String, default: "Yes, This Is Hokoo User" },
+    name: { type: String, default: "Babble User" },
+    bio: { type: String, default: "Yes, This Is Babble User" },
     identity: String,
     uniqueID: { type: String, unique: true },
     fcm_token: { type: String, default: null },
-    email: { type: String, default: "Hokoo@gmail.com" },
+    email: { type: String, default: "Babble@gmail.com" },
     password: { type: String, default: null },
     token: { type: String, default: null },
     channel: { type: String, default: null },
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     dob: { type: String, default: "01-01-2000" },
     image: { type: String, default: null },
     country: { type: String, default: "" },
-    loginType: { type: Number, enum: [0, 1, 2] }, //0.quick  1. google
+    loginType: { type: Number, enum: [0, 1, 2, 3] }, //0.quick  1. google 2. fake login 3. custom login
     lastLogin: String,
     platformType: { type: Number, enum: [0, 1], default: 0 }, //0.android  1.ios
     isOnline: { type: Boolean, default: false },
@@ -38,6 +38,20 @@ const userSchema = new mongoose.Schema(
 
     liveStreamingId: { type: mongoose.Schema.Types.ObjectId, ref: "LiveStreamingHistory", default: null },
     agoraUid: { type: Number, default: 0 },
+
+    referralCode: { type: String, default: null },
+    referredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    referredUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
+    ],
   },
   {
     timestamps: true,
