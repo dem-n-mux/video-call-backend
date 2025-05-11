@@ -951,6 +951,8 @@ exports.AddFakeHost = async (req, res) => {
   try {
     const host = new Host();
 
+    const isReal = req.body.type === "real" ? true : false;
+
     host.name = req.body.name;
     host.gender = req.body.gender;
     host.age = req.body.age;
@@ -960,7 +962,7 @@ exports.AddFakeHost = async (req, res) => {
     for (let i = 0; i < 8; i++) {
       password += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
     }
-    host.password = password;
+    host.password = isReal ? req.body.password : password;
 
     if (req.body.imageType == 1) {
       host.image = req.body.image ? req.body.image : null;
@@ -1005,10 +1007,10 @@ exports.AddFakeHost = async (req, res) => {
     host.bio = req.body.bio ? req.body.bio : null;
     host.country = req.body.country;
     host.identity = req.body.identity ? req.body.identity : null;
-    host.loginType = 2;
+    host.loginType = isReal ? 1 : 2;
     host.analyticDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     host.email = req.body.email;
-    host.isFake = true;
+    host.isFake = isReal ? false : true;
     host.isOnline = true;
     await host.save();
 
