@@ -1007,7 +1007,7 @@ exports.AddFakeHost = async (req, res) => {
     host.bio = req.body.bio ? req.body.bio : null;
     host.country = req.body.country;
     host.identity = req.body.identity ? req.body.identity : null;
-    host.loginType = isReal ? 1 : 2;
+    host.loginType = isReal ? 0 : 2;
     host.analyticDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     host.email = req.body.email;
     host.isFake = isReal ? false : true;
