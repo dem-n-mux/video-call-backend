@@ -3,17 +3,16 @@ module.exports = {
     PORT: process.env.PORT || 5000,
 
     //Gmail credentials for send email
-    EMAIL: "kodebookapp@gmail.com",
-    PASSWORD: "nohwrpybgiuhqjfy",
+    EMAIL: "",
+    PASSWORD: "",
 
     //Secret key for jwt
     JWT_SECRET: "shared_jwt_secret",
 
     //Project Name
-    projectName : "$app_name",
+    projectName : "Babble",
 
-    //baseURL
-    // baseURL: "http://flirtzybackend.centralindia.cloudapp.azure.com:5000/",
+    //Base URL
     baseURL: "http://localhost:5000/",
 
     //Secret key for API
