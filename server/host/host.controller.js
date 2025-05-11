@@ -1011,7 +1011,7 @@ exports.AddFakeHost = async (req, res) => {
     host.analyticDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
     host.email = req.body.email;
     host.isFake = isReal ? false : true;
-    host.isOnline = true;
+    host.isOnline = isReal ? false : true;
     await host.save();
 
     return res.status(200).send({
