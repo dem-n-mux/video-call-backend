@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema(
       coinPlanId: { type: mongoose.Schema.Types.ObjectId, default: null },
     },
 
+    isRedeemPlan: { type: Boolean, default: false }, // for redeemPlan purchase
+    redeemPlan: {
+      planStartDate: { type: String, default: null }, // redeemPlan start date
+      redeemPlanId: { type: mongoose.Schema.Types.ObjectId, default: null },
+    },
+
     liveStreamingId: { type: mongoose.Schema.Types.ObjectId, ref: "LiveStreamingHistory", default: null },
     agoraUid: { type: Number, default: 0 },
 

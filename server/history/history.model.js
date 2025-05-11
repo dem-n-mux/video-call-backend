@@ -6,6 +6,7 @@ const historySchema = new mongoose.Schema(
     hostId: { type: mongoose.Schema.Types.ObjectId, ref: "Host", default: null },
     giftId: { type: mongoose.Schema.Types.ObjectId, ref: "Gift", default: null },
     coinPlanId: { type: mongoose.Schema.Types.ObjectId, ref: "CoinPlan" },
+    redeemPlanId: { type: mongoose.Schema.Types.ObjectId, ref: "RedeemPlan", default: null },
 
     paymentGateway: String,
     date: String,

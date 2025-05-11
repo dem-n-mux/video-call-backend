@@ -38,6 +38,10 @@ route.use("/banner", bannerRouter);
 const coinPlanRouter = require("./server/coinPlan/coinPlan.route");
 route.use("/coinPlan", coinPlanRouter);
 
+//Redeem Plan  Route
+const redeemPlanRouter = require("./server/redeemPlan/redeemPlan.route");
+route.use("/redeemPlan", redeemPlanRouter);
+
 //Setting  Route
 const settingRouter = require("./server/setting/setting.route");
 route.use("/setting", settingRouter);
