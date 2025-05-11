@@ -50,7 +50,7 @@ const userFunction = async (user, data_) => {
   user.dob = data.dob ? data.dob : user.dob;
   user.coin = data.coin ? data.coin : user.coin;
   user.fcm_token = data.fcm_token;
-  user.age = data.age;
+  user.age = Number(data.age);
   user.country = data.country ? data.country.toLowerCase().trim() : user.country;
   user.lastLogin = new Date().toLocaleString("en-US");
   user.uniqueID = data.uniqueID ? data.uniqueID : user.uniqueID;
@@ -288,7 +288,7 @@ exports.loginUser = async (req, res) => {
 
 exports.registerUser = async (req, res) => {
   try {
-    if (!req.body.identity || req.body.loginType !== 3 || !req.body.fcm_token) {
+    if (!req.body.identity || Number(req.body.loginType) !== 3 || !req.body.fcm_token) {
       return res
         .status(400)
         .json({ status: false, message: "Invalid Details!!" });
@@ -366,7 +366,7 @@ exports.registerUser = async (req, res) => {
 
       referringUser.referredUsers.push(newUser._id);
       newUser.referredBy = referringUser._id;
-      referringUser.coin += global.settingJSON?.referralBonus || 30;
+      referringUser.coin += settingJSON.referralBonus || 30;
     }
 
     newUser.referralCode = Math.random()
@@ -375,7 +375,7 @@ exports.registerUser = async (req, res) => {
       .toUpperCase();
 
     const user = await userFunction(newUser, req);
-    await referringUser.save();
+    if (referringUser) await referringUser.save();
 
     res.status(200).json({
       status: true,
