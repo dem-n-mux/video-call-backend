@@ -313,39 +313,35 @@ exports.registerUser = async (req, res) => {
     newUser.coin = bonusCoins;
 
     const gender = req.body.gender;
-    let LastUser;
-
-    if (gender === "Female") {
-      LastUser = await User.find({ gender: "Female" })
-        .sort({ uniqueID: -1 })
-        .limit(1);
-    } else if (gender === "Male") {
-      LastUser = await User.find({ gender: "Male" })
-        .sort({ uniqueID: -1 })
-        .limit(1);
-    } else {
+    if (gender !== "Male" && gender !== "Female") {
       return res.status(400).json({ status: false, message: "Invalid gender" });
     }
 
+    const lastUser = await User.find({ gender })
+      .sort({ uniqueID: -1 })
+      .limit(1);
+
     let count = 1;
-    if (LastUser.length > 0) {
-      const lastUID = LastUser[0].uniqueID;
+    if (lastUser.length > 0) {
+      const lastUID = lastUser[0].uniqueID;
 
-      const lastAlpha = lastUID.replace(/^0+/, "");
-      let lastAlphaValue = 0;
-      for (let i = 0; i < lastAlpha.length; i++) {
-        lastAlphaValue = lastAlphaValue * 26 + (lastAlpha.charCodeAt(i) - 64);
+      if (gender === "Female") {
+        const alphaPart = lastUID.replace(/^0+/, "");
+        let lastAlphaValue = 0;
+        for (let i = 0; i < alphaPart.length; i++) {
+          lastAlphaValue = lastAlphaValue * 26 + (alphaPart.charCodeAt(i) - 64);
+        }
+        count = lastAlphaValue + 1;
+      } else {
+        count = parseInt(lastUID, 10) + 1;
       }
-
-      count = lastAlphaValue + 1;
     }
 
     let uniqueID;
 
     if (gender === "Female") {
       const alphaID = getAlphaID(count);
-      const paddedID = alphaID.padStart(5, "0");
-      uniqueID = paddedID;
+      uniqueID = alphaID.padStart(5, "0");
     } else {
       uniqueID = count.toString().padStart(5, "0");
     }

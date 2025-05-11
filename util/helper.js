@@ -1,13 +1,13 @@
-function getAlphaID(count) {
-  let alpha = "";
-  let n = count - 1;
-  while (n >= 0) {
-    alpha = String.fromCharCode((n % 26) + 65) + alpha;
-    n = Math.floor(n / 26) - 1;
+const getAlphaID = (n) => {
+  let s = "";
+  while (n > 0) {
+    let mod = (n - 1) % 26;
+    s = String.fromCharCode(65 + mod) + s;
+    n = Math.floor((n - 1) / 26);
   }
-  return alpha;
-}
+  return s;
+};
 
 module.exports = {
-  getAlphaID
-}
+  getAlphaID,
+};
