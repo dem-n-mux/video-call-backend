@@ -421,7 +421,7 @@ exports.loginUserByPassword = async (req, res) => {
     }
 
     const user = await User.findOne({ email: req.body.email });
-    const host = !user ? await Host.findOne({ email: req.body.email }) : null;
+    const host = await Host.findOne({ email: req.body.email });
 
     if (!user && !host) {
       return res
@@ -446,7 +446,7 @@ exports.loginUserByPassword = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Login Successfully!!",
-      ...(!account.isHost ? { user : account } : { host : account }),
+      ...(!account.isHost ? { user : account } : { host : host }),
     });
   } catch (error) {
     console.error(error);
