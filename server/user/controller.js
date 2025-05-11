@@ -450,7 +450,7 @@ exports.loginUserByPassword = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Login Successfully!!",
-      ...(!account.isHost ? { user } : { host }),
+      ...(!account.isHost ? { user : account } : { host : account }),
     });
   } catch (error) {
     console.error(error);
