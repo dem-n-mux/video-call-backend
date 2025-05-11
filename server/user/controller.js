@@ -425,20 +425,23 @@ exports.loginUserByPassword = async (req, res) => {
     }
 
     const user = await User.findOne({ email: req.body.email });
+    const host = !user ? await Host.findOne({ email: req.body.email }) : null;
 
-    if (!user) {
+    if (!user && !host) {
       return res
         .status(400)
         .json({ status: false, message: "User does not exist!!" });
     }
 
-    if (user.isBlock) {
+    const account = user || host;
+
+    if (account.isBlock) {
       return res
         .status(400)
         .json({ status: false, message: "You are blocked by admin!" });
     }
 
-    if (user.password !== req.body.password) {
+    if (account.password !== req.body.password) {
       return res
         .status(400)
         .json({ status: false, message: "Password is incorrect!!" });
@@ -446,14 +449,14 @@ exports.loginUserByPassword = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: "User login Successfully!!",
-      user,
+      message: "Login Successfully!!",
+      user: account,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       status: false,
-      message: error.message || "Internal Sever Error!!",
+      message: error.message || "Internal Server Error!!",
     });
   }
 };
