@@ -144,6 +144,24 @@ exports.checkUser = async (req, res) => {
   }
 };
 
+exports.checkCode = async (req, res) => {
+  try {
+    if (!req.query.code) {
+      return res.status(200).json({ status: false, message: "Code must be present!" });
+    }
+
+    const user = await User.findOne({ referralCode: req.query.code });
+    if (user) {
+      return res.status(200).json({ status: true, message: "Success", user: { name : user.name } });
+    } else {
+      return res.status(400).json({ status: false, message: "Oops ! user not found!", user: {} });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ status: false, error: error.message || "Internal Server Error" });
+  }
+}
+
 //login and Create user API [App]
 exports.loginUser = async (req, res) => {
   try {

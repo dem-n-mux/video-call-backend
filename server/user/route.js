@@ -16,6 +16,7 @@ const userController = require("./controller");
 
 router.post("/login", checkAccessWithSecretKey(), userController.loginUserByPassword);
 router.post("/register", checkAccessWithSecretKey(), upload.single("image"), userController.registerUser);
+router.get("/checkCode", checkAccessWithSecretKey(), userController.checkCode);
 
 // Existing APIs
 
