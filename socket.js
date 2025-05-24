@@ -85,19 +85,17 @@ io.on("connect", async (socket) => {
     const host = await Host.findById(globalRoom);
 
     if (host) {
-      console.log("$$$$$$$$$$$$$$$$$$$$ HOst", host.isOnline);
+      console.log("$$$$$$$$$$$$$$$$$$$$ Host", host != null ? host.isOnline : "SOCKET ERROR: host null");
       host.isOnline = true;
       await host.save();
     } else {
       const user = await User.findById(globalRoom);
-      console.log("$$$$$$$$$$$$$$$$$$$$ User", user.isOnline);
+      console.log("$$$$$$$$$$$$$$$$$$$$ User", user != null ? user.isOnline : "SOCKET ERROR: user null");
       if (user) {
         user.isOnline = true;
         await user.save();
       }
     }
-
-    //console.log("Host ==================>", host);
   }
 
   //videoCallRoom
