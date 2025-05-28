@@ -114,4 +114,7 @@ route.use("/withdraw", WithdrawRoute);
 const LoginRoute = require("./server/login/login.route");
 route.use("/", LoginRoute);
 
+const RatingRoute = require("./server/rating/rating.route");
+route.use("/rating", RatingRoute);
+
 module.exports = route;

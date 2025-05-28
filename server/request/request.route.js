@@ -26,6 +26,8 @@ router.post(
   hostRequestFile.requestStore
 );
 
+router.get("/:userId", checkAccessWithSecretKey(), hostRequestFile.getRequestByUserId);
+
 //Update Request
 router.patch(
   "/:requestId",

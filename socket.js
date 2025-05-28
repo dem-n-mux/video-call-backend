@@ -19,6 +19,7 @@ const admin = require("./util/privateKey");
 
 //roundNumber funcyion for coin
 const { roundNumber } = require("./util/roundNumber");
+const Rating = require("./server/rating/rating.model");
 
 io.on("connect", async (socket) => {
   console.log("Socket Connect Successfully!!");
@@ -719,8 +720,11 @@ io.on("connect", async (socket) => {
           }
         );
 
+        const ratingObj = await Rating.findOne({ userId : host._id });
+        const userCharges = ratingObj.charges;
+
         if (data.callType === "random") {
-          console.log("chargeForRandomCall type random call ", global.settingJSON.chargeForRandomCall);
+          // console.log("chargeForRandomCall type random call ", global.settingJSON.chargeForRandomCall);
 
           // const history = new History();
           // history.userId = user._id;
@@ -734,7 +738,7 @@ io.on("connect", async (socket) => {
           await History.updateOne(
             { callUniqueId: data.callId, isIncome: false },
             {
-              $inc: { coin: global.settingJSON.chargeForRandomCall },
+              $inc: { coin: userCharges },
             },
             {
               $new: true,
@@ -751,7 +755,7 @@ io.on("connect", async (socket) => {
             }
           );
 
-          user.coin -= global.settingJSON.chargeForRandomCall;
+          user.coin -= userCharges;
           await user.save();
         } else if (data.callType === "private") {
           console.log("type private call ");
@@ -759,7 +763,7 @@ io.on("connect", async (socket) => {
           await History.updateOne(
             { callUniqueId: data.callId, isIncome: false },
             {
-              $inc: { coin: data.coin },
+              $inc: { coin: userCharges },
             },
             {
               $new: true,
@@ -769,26 +773,26 @@ io.on("connect", async (socket) => {
           await History.updateOne(
             { callUniqueId: data.callId, isIncome: true },
             {
-              $inc: { coin: number },
+              $inc: { coin: userCharges },
             },
             {
               $new: true,
             }
           );
 
-          user.coin -= data.coin;
+          user.coin -= userCharges;
           await user.save();
         }
 
         if (data.callType === "private") {
-          host.coin += number;
-          host.receiveCoin += number;
+          host.coin += userCharges;
+          host.receiveCoin += userCharges;
           host.isLive = false;
 
           await host.save();
         } else if (data.callType === "random") {
-          host.coin += number;
-          host.receiveCoin += number;
+          host.coin += userCharges;
+          host.receiveCoin += userCharges;
           host.isLive = false;
 
           await host.save();

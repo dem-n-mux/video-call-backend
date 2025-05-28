@@ -62,6 +62,12 @@ exports.update = async (req, res) => {
     setting.withdrawLimit = req.body.withdrawLimit ? req.body.withdrawLimit : setting.withdrawLimit;
     setting.link = req.body.link ? req.body.link : setting.link;
 
+    setting.oneStarCharge = req.body.oneStarCharge ? req.body.oneStarCharge : setting.oneStarCharge;
+    setting.twoStarCharge = req.body.twoStarCharge ? req.body.twoStarCharge : setting.twoStarCharge;
+    setting.threeStarCharge = req.body.threeStarCharge ? req.body.threeStarCharge : setting.threeStarCharge;
+    setting.fourStarCharge = req.body.fourStarCharge ? req.body.fourStarCharge : setting.fourStarCharge;
+    setting.fiveStarCharge = req.body.fiveStarCharge ? req.body.fiveStarCharge : setting.fiveStarCharge;
+
     setting.welcomeMessage = req.body.welcomeMessage ? req.body.welcomeMessage : setting.welcomeMessage;
     setting.redirectAppUrl = req.body.redirectAppUrl ? req.body.redirectAppUrl : setting.redirectAppUrl;
     setting.redirectMessage = req.body.redirectMessage ? req.body.redirectMessage : setting.redirectMessage;

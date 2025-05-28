@@ -1,6 +1,7 @@
 const Request = require("./request.model");
 const User = require("../user/model");
 const Host = require("../host/host.model");
+const Rating = require("../rating/rating.model");
 const { deleteFile } = require("../../util/deleteFile");
 
 const { baseURL } = require("../../config");
@@ -185,7 +186,12 @@ exports.requestAccept = async (req, res) => {
     host.country = request.country;
     host.userId = request.userId;
 
-    await Promise.all([request.save(), user.save(), host.save()]);
+    const rating = new Rating();
+    rating.userId = host._id;
+    rating.rating = 0;
+    rating.charges = 100;
+
+    await Promise.all([request.save(), user.save(), host.save(), rating.save()]);
 
     return res.status(200).json({ status: true, message: "Success!!", request });
   } catch (error) {
@@ -196,3 +202,25 @@ exports.requestAccept = async (req, res) => {
     });
   }
 };
+
+exports.getRequestByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ status: false, message: "User ID is required." });
+    }
+
+    const request = await Request.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+    if (!request) {
+      return res.status(404).json({ status: false, message: "Request not found for this user." });
+    }
+
+    return res.status(200).json({ status: true, message: "Request found.", request });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+}

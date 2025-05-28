@@ -16,7 +16,7 @@ const LiveHost = require("../liveHost/liveHost.model");
 const LiveHistory = require("../liveStreamingHistory/liveStreamingHistory.model");
 const Notification = require("../notification/notification.model");
 const RandomHistory = require("../randomHistory/randomHistory.model");
-const Rating = require("../ratting/ratting.model");
+const Rating = require("../rating/rating.model");
 const Redeem = require("../redeem/redeem.model");
 const User = require("../user/model");
 
@@ -1014,6 +1014,15 @@ exports.AddFakeHost = async (req, res) => {
     host.isOnline = isReal ? false : true;
     await host.save();
 
+    if (isReal) {
+      const rating = new Rating();
+      rating.userId = host._id;
+      rating.rating = 0;
+      rating.charges = 100;
+      
+      await rating.save();
+    }
+
     return res.status(200).send({
       status: true,
       message: "Success",
@@ -1311,7 +1320,7 @@ exports.deleteHostAccount = async (req, res) => {
       LiveHistory.deleteMany({ hostId: host._id }),
       Notification.deleteMany({ hostId: host?._id }),
       RandomHistory.deleteMany({ hostId: host?._id }),
-      Rating.deleteMany({ hostId: host?._id }),
+      Rating.deleteMany({ userId: host?._id }),
       Redeem.deleteMany({ hostId: host?._id }),
       Host.deleteOne({ _id: host?._id }),
     ]);

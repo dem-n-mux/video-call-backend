@@ -35,6 +35,12 @@ const settingSchema = new mongoose.Schema(
     chargeForRandomCall: { type: Number, default: 0 },
     chargeForPrivateCall: { type: Number, default: 0 },
     withdrawLimit: { type: Number, default: 0 },
+    baseCharge: { type: Number, default: 100 },
+    oneStarCharge: { type: Number, default: 100 },
+    twoStarCharge: { type: Number, default: 100 },
+    threeStarCharge: { type: Number, default: 100 },
+    fourStarCharge: { type: Number, default: 100 },
+    fiveStarCharge: { type: Number, default: 100 },
 
     coinPerDollar: { type: Number, default: 50 },
     coinCharge: { type: Number, default: 0 },
